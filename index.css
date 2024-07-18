@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Square+Peg&display=swap");
+
+/* 1920 * 1080 */
+/* 1366 * 768 */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: white;
+}
+
+@media (max-width: 1500px){
+    :root{
+        font-size: 16px;
+    }
+}
+@media (max-width: 1366px){
+    :root{
+        font-size: 14px;
+    }
+}
+@media (max-width: 1024px){
+    :root{
+        font-size: 12px;
+    }
+}
+@media (max-width: 900px){
+    :root{
+        font-size: 10px;
+    }
+}
+@media (max-width: 768px){
+    :root{
+        font-size: 8px;
+    }
+}
+@media (max-width: 500px){
+    :root{
+        font-size: 7px;
+    }
+}
+
+img {
+    width: 100%;
+}
+
+.h1 {
+    font-family: "Square Peg";
+    /* font-size: 3rem; */
+    font-size: 3vw;
+
+}
+.h5{
+    font-family: sans-serif;
+    font-size: 1.4vw;
+    /* font-size: 1.4rem; */
+}
+.body-text {
+    font-size: 1vw;
+    font-family: sans-serif;
+}
+.body-text-sp {
+    font-size: 3vw;
+    font-family: "Square Peg";
+}
+
+.nav-gradient{
+    background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(118,117,131,0) 100%);
+}
+
+.sec-size{
+    width: 100%;
+    height: 100vh;
+}
+
+/* hero-section */
+
+.hero-sec {
+    position: relative;
+    /* overflow: hidden; */
+
+    background: url("hero-sec-bg.webp");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+
+}
+
+.hero-bg {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.5vw 2vw;
+
+    width: 100%;
+
+    position: fixed;
+    top: 0;
+
+    transition: all .5s;
+    z-index: 1000;
+}
+
+.project-logo,
+.godrej-logo {
+    width: 10%;
+}
+
+.menu-logo {
+    width: 3%;
+}
+
+.hero-sec-content{
+    position: absolute;
+    top: 4rem;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: grid;
+    justify-items: center;
+
+    margin-top: 2vw;
+
+    width: 100%;
+    text-align: center;
+}
+
+/* 2nd page */
+
+.second-sec{
+    background: url("2nd-page-bg.webp");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+
+    position: relative;
+}
+
+.sec-content-2{
+    position: absolute;
+    top: 20vw;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: grid;
+    justify-items: center;
+    width: 60%;
+    gap: 3vw;
+    text-align: center;
+}
+
+/* third page */
+
+.third-sec{
+    background: url("3rd-page-side.webp");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+
+    display: grid;
+    grid-template-columns: 45% 55%;
+    justify-content: start;
+    align-items: center;
+
+    padding: 0 5vw;  
+}
+
+.sec-content-3{
+    grid-column: 2/3;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2vw;
+
+    width: 100%;
+}
+
+.list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 1vw;
+}
+
+.list > ul{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: .5vw;
+}
+
+/* 4th section */
+
+.fourth-sec{
+    background-color: #8ca78f;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    align-items: center;
+
+    gap: 2vw;
+}
+
+.left-4{
+    padding-left: 5vw;
+    width: 100%;
+}
+
+/* slider--1 */
+
+.slider{
+    overflow: hidden;
+    position: relative;
+    height: 110vh;
+}
+
+.slide{
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .5s ease-in-out;
+    height: 110vh;
+}
+
+.dots{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+
+    position: absolute;
+    bottom: 2vw;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 3;
+}
+
+.dot{
+    width: .6vw;
+    height: .6vw;
+    border-radius: 50%;
+    border: 1px solid #000;
+    transition: all .5s ease-in-out;
+}
+
+.dot-active{
+    background-color: #fff;
+    width: 5vw;
+    border-radius: 10rem;
+}
