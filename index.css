@@ -232,7 +232,9 @@ nav {
     top: 0;
     left: 0;
     transition: all .5s ease-in-out;
-    height: 110vh;
+    /* height: 110vh; */
+    width: 100%;
+    /* object-fit: cover; */
 }
 
 .dots{
