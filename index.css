@@ -10,33 +10,33 @@
     color: white;
 }
 
-@media (max-width: 1500px){
-    :root{
+@media (max-width: 1500px) {
+    :root {
         font-size: 16px;
     }
 }
-@media (max-width: 1366px){
-    :root{
+@media (max-width: 1366px) {
+    :root {
         font-size: 14px;
     }
 }
-@media (max-width: 1024px){
-    :root{
+@media (max-width: 1024px) {
+    :root {
         font-size: 12px;
     }
 }
-@media (max-width: 900px){
-    :root{
+@media (max-width: 900px) {
+    :root {
         font-size: 10px;
     }
 }
-@media (max-width: 768px){
-    :root{
+@media (max-width: 768px) {
+    :root {
         font-size: 8px;
     }
 }
-@media (max-width: 500px){
-    :root{
+@media (max-width: 500px) {
+    :root {
         font-size: 7px;
     }
 }
@@ -49,9 +49,8 @@ img {
     font-family: "Square Peg";
     /* font-size: 3rem; */
     font-size: 3vw;
-
 }
-.h5{
+.h5 {
     font-family: sans-serif;
     font-size: 1.4vw;
     /* font-size: 1.4rem; */
@@ -65,13 +64,13 @@ img {
     font-family: "Square Peg";
 }
 
-.nav-gradient{
-    background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(118,117,131,0) 100%);
+.nav-gradient {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(118, 117, 131, 0) 100%);
 }
 
-.sec-size{
+.sec-size {
     width: 100%;
-    height: 100vh;
+    /* height: 95vh; */
 }
 
 /* hero-section */
@@ -85,12 +84,7 @@ img {
     background-size: cover;
     background-position: top;
 
-}
-
-.hero-bg {
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
+    aspect-ratio: 1366/767;
 }
 
 nav {
@@ -105,7 +99,7 @@ nav {
     position: fixed;
     top: 0;
 
-    transition: all .5s;
+    transition: all 0.5s;
     z-index: 1000;
 }
 
@@ -118,7 +112,7 @@ nav {
     width: 3%;
 }
 
-.hero-sec-content{
+.hero-sec-content {
     position: absolute;
     top: 4rem;
     left: 50%;
@@ -134,16 +128,17 @@ nav {
 
 /* 2nd page */
 
-.second-sec{
+.second-sec {
     background: url("2nd-page-bg.webp");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: top;
 
     position: relative;
+    aspect-ratio: 1366/769;
 }
 
-.sec-content-2{
+.sec-content-2 {
     position: absolute;
     top: 20vw;
     left: 50%;
@@ -157,21 +152,23 @@ nav {
 
 /* third page */
 
-.third-sec{
+.third-sec {
     background: url("3rd-page-side.webp");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: top;
+
+    aspect-ratio: 683/384;
 
     display: grid;
     grid-template-columns: 45% 55%;
     justify-content: start;
     align-items: center;
 
-    padding: 0 5vw;  
+    padding: 0 5vw;
 }
 
-.sec-content-3{
+.sec-content-3 {
     grid-column: 2/3;
     text-align: center;
     display: flex;
@@ -184,7 +181,7 @@ nav {
     width: 100%;
 }
 
-.list{
+.list {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -193,18 +190,18 @@ nav {
     gap: 1vw;
 }
 
-.list > ul{
+.list > ul {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    gap: .5vw;
+    gap: 0.5vw;
 }
 
 /* 4th section */
 
-.fourth-sec{
+.fourth-sec {
     background-color: #8ca78f;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -214,30 +211,40 @@ nav {
     gap: 2vw;
 }
 
-.left-4{
+.left-4 {
     padding-left: 5vw;
     width: 100%;
 }
 
-/* slider--1 */
+/* slider common */
 
-.slider{
+.slider {
     overflow: hidden;
     position: relative;
-    height: 110vh;
+    /* height: 100vh; */
 }
 
-.slide{
+.slide {
     position: absolute;
     top: 0;
     left: 0;
-    transition: all .5s ease-in-out;
-    /* height: 110vh; */
+    transition: all 0.5s ease-in-out;
     width: 100%;
-    /* object-fit: cover; */
+    display: flex;
+    justify-content: center;
+    align-items: start;
+
+    background-color: #56a1a7;
 }
 
-.dots{
+.slider-1-slide {
+    aspect-ratio: 683/385;
+}
+.slider-2-slide {
+    aspect-ratio: 1351/760;
+}
+
+.dots {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -250,16 +257,21 @@ nav {
     z-index: 3;
 }
 
-.dot{
-    width: .6vw;
-    height: .6vw;
+.dot {
+    width: 0.8vw;
+    height: 0.8vw;
     border-radius: 50%;
-    border: 1px solid #000;
-    transition: all .5s ease-in-out;
+    border: 0.01rem solid #fff;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
 }
 
-.dot-active{
-    background-color: #fff;
+.dot:hover {
+    background-color: #3a3a3a;
+}
+
+.dot-active {
+    background-color: #4b4b4b;
     width: 5vw;
     border-radius: 10rem;
 }
