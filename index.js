@@ -18,7 +18,7 @@ window.addEventListener("load", () => {
     }
     let isMouseDown = false;
     let initialPos = 0, displacement = 110, initialDisplacement = 20;
-    const timeoutDurationMs2 = 500, intervalDurationMs = 5000, durationOfTimeoutAfterInterval = 100;
+    const timeoutDurationMs2 = 100, intervalDurationMs = 5000, durationOfTimeoutAfterInterval = 10;
     // const timeoutDurationMs2 = 10000, intervalDurationMs = 15000, durationOfTimeoutAfterInterval = 2000;
 
 
@@ -136,14 +136,13 @@ window.addEventListener("load", () => {
         };
 
 
-        let intervalId = 0;
-        // let intervalId = setInterval(intervalFn, intervalDurationMs);
+        // let intervalId = 0;
+        let intervalId = setInterval(intervalFn, intervalDurationMs);
 
 
         dots.forEach((el, idx) => {
             el.addEventListener("mousedown", (e) => {
                 e.stopPropagation();
-                console.log("dot's clicked");
                 clearTimeout(timeoutId);
                 clearInterval(intervalId);
 
@@ -258,19 +257,12 @@ window.addEventListener("load", () => {
 
         sliderBox.addEventListener("mousemove", (e) => {
             e.preventDefault();
+            e.stopPropagation();
             if (isMouseDown) {
-                console.log("from mouse move ==============>>>>>>>>>>>>>>>>", tempTranslationArr, slides);
                 let movement = e.pageX - sliderBox.offsetLeft;
                 const walk = (initialPos - movement);
                 const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
-                tempTranslationArr = tempTranslationArr.map(val => {
-                    console.log({ val });
-                    val = val - walkInPercent + oldWalkingDistance;
-                    console.log({ val });
-
-                    return val;
-                });
-                console.log("from mouse move ==============>>>>>>>>>>>>>>>>", tempTranslationArr, translateArrs[i - 1]);
+                tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
                 oldWalkingDistance = walkInPercent;
                 slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
             }
@@ -311,8 +303,6 @@ window.addEventListener("load", () => {
         clearTimeout(timeoutId);
         clearInterval(intervalId);
 
-        console.log("before removing slides   =>>>>>>>>>>>>>>>  ", translateArrs[i - 1]);
-
         let lastZerothIdx = null, prevToFirstSlideIdx = null, elToRemoveIdx = [];
 
         for (let idx = 0; idx < slidesCount; idx++) {
@@ -331,14 +321,13 @@ window.addEventListener("load", () => {
             }
             if (val >= maxDisplacement || val < minDisplacement) elToRemoveIdx.push(idx);
 
-
         }
-
-        removeSlides(elToRemoveIdx, slides);
 
         cloneAddTranslate(slides[prevToFirstSlideIdx], minDisplacement - displacement);
 
         cloneAddTranslate(slides[lastZerothIdx], maxDisplacement);
+
+        removeSlides(elToRemoveIdx, slides);
 
         slides = document.querySelectorAll(`.slider-${i} .slide`);
         const arr = [];
@@ -367,8 +356,6 @@ window.addEventListener("load", () => {
             translateArrs[i - 1][idx] = val
         });
 
-        console.log("after removing slides   =>>>>>>>>>>>>>>>  ", translateArrs[i - 1]);
-
         return [lastZerothIdx, tempTranslationArr, slides, slidesCount];
     }
 
@@ -378,35 +365,30 @@ window.addEventListener("load", () => {
 
         let displaceAmount = 0, currentZero = -1, prevZero = -1;
 
-        console.log(oldWalkingDistance);
-
         if (Math.abs(oldWalkingDistance) > 30) {
             displaceAmount = oldWalkingDistance > 0 ? -displacement : displacement;
         }
-
-        console.log({ displaceAmount });
 
         slides.forEach((el, idx) => {
             el.style.transitionDuration = `.5s`
             el.style.transform = `translate(${translateArrs[i - 1][idx] + displaceAmount}%, 0)`;
             if (translateArrs[i - 1][idx] === initialDisplacement) prevZero = +el.classList[0].split("-").at(-1);
-            console.log(translateArrs[i - 1][idx]);
             translateArrs[i - 1][idx] += displaceAmount;
-            console.log(translateArrs[i - 1][idx]);
             if (translateArrs[i - 1][idx] === initialDisplacement) currentZero = +el.classList[0].split("-").at(-1);
         });
 
-        console.log("after displacing slides   =>>>>>>>>>>>>>>>  ", translateArrs[i - 1]);
+        slides = document.querySelectorAll(`.slider-${i} .slide`);
+        slidesCount = slides.length;
 
         oldWalkingDistance = 0;
 
         dots[prevZero].classList.remove("dot-active");
         dots[currentZero].classList.add("dot-active");
 
-        // const timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs2);
-        const timeoutId = 0;
-        // const intervalId = setInterval(intervalFn, intervalDurationMs);
-        const intervalId = 0;
+        const timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs2);
+        // const timeoutId = 0;
+        const intervalId = setInterval(intervalFn, intervalDurationMs);
+        // const intervalId = 0;
 
         return [false, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides]
     }
