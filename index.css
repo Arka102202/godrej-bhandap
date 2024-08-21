@@ -561,15 +561,15 @@ nav {
 
 @media (max-width: 500px) {
     .slider-1-slide {
-        aspect-ratio: 1080x1800;
+        aspect-ratio: 1080/1800;
     }
 
     .slider-2-slide {
-        aspect-ratio: 1080x1800;
+        aspect-ratio: 1080/1800;
     }
 
     .slider-3-slide {
-        aspect-ratio: 1080x1800;
+        aspect-ratio: 1080/1800;
     }
 
     .slider {

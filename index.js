@@ -11,15 +11,32 @@ window.addEventListener("load", () => {
         }
     });
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// ----------------------------- Slider Code -----------------------------////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Total number of sliders on the page
     const sliderCount = document.querySelectorAll(".slider").length;
+
+    // to keep track of the exact translations of all the slides of individual sliders
     let translateArrs = [];
+
+    // adding one array for each sliders
     for (let i = 0; i < sliderCount; i++) {
         translateArrs.push([]);
     }
+
+    // to keep track of the mouse movement
     let isMouseDown = false;
-    let initialPos = 0, displacement = 110, initialDisplacement = 20;
-    const timeoutDurationMs2 = 100, intervalDurationMs = 5000, durationOfTimeoutAfterInterval = 10;
-    // const timeoutDurationMs2 = 10000, intervalDurationMs = 15000, durationOfTimeoutAfterInterval = 2000;
+
+    // initial position of the mouse
+    let initialPos = 0;
+
+    // different timings for different timing functions
+    const timeoutDurationMs = 500, intervalDurationMs = 5000, durationOfTimeoutAfterInterval = 10;
+    // const timeoutDurationMs = 10000, intervalDurationMs = 15000, durationOfTimeoutAfterInterval = 2000;
 
 
     for (let i = 1; i <= sliderCount; i++) {
@@ -28,6 +45,14 @@ window.addEventListener("load", () => {
 
         // each slide
         let slides = document.querySelectorAll(`.slider-${i} .slide`);
+
+        // amount of displacement each time
+        const displacement = +sliderBox.dataset.displacement;
+
+        // initial displacement of the first slide
+        const initialDisplacement = +sliderBox.dataset.initialDisplacement;
+
+        const isDragable = sliderBox.dataset.dragable === "1";
 
         let slidesCount = slides.length;
         const initialSlideCount = slides.length;
@@ -56,6 +81,7 @@ window.addEventListener("load", () => {
             const height = window.getComputedStyle(el.querySelector("img")).height;
             sliderBox.style.height = height;
             updateTranslationNDotClass(el, translateArrs, dots, idx, i, 0, initialSlideCount);
+            el.className = `slide-${idx} ` + el.className;
             if (idx === initialSlideCount - 1) {
                 cloneAddTranslate(el, minDisplacement)
                 translateArrs[i - 1].push(minDisplacement);
@@ -133,7 +159,7 @@ window.addEventListener("load", () => {
                 });
 
                 // changing the opacity of the slide with translation = -100
-                timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs2)
+                timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs)
             }, durationOfTimeoutAfterInterval)
         };
 
@@ -153,18 +179,18 @@ window.addEventListener("load", () => {
 
                 const nxtDotIdx = idx;
 
-                const initialDisplacementIdx = translateArrs[i - 1].findIndex(el => el === initialDisplacement);
-                const currentDotIdx = +slides[initialDisplacementIdx].classList[0].split("-").at(-1);
-
-                const maxTranslationIdx = translateArrs[i - 1].findIndex(el => el === maxDisplacement - displacement);
-                const maxTranslatedSlideIdx = +slides[maxTranslationIdx].classList[0].split("-").at(-1);
-
-                let currentSlidePosition = 0;
+                let currentSlidePosition = 0, currentDotIdx = 0, maxTranslatedSlideIdx = 0;
 
                 for (let slideIdx = 0; slideIdx < slides.length; slideIdx++) {
                     const slideActualIdx = +slides[slideIdx].classList[0].split("-").at(-1);
-                    if (translateArrs[i - 1][slideIdx] !== minDisplacement && slideActualIdx === nxtDotIdx)
+
+                    if (translateArrs[i - 1][slideIdx] !== minDisplacement && slideActualIdx === nxtDotIdx) {
                         currentSlidePosition = translateArrs[i - 1][slideIdx];
+                    } if (translateArrs[i - 1][slideIdx] === initialDisplacement) {
+                        currentDotIdx = slideActualIdx;
+                    } if (translateArrs[i - 1][slideIdx] === maxDisplacement - displacement) {
+                        maxTranslatedSlideIdx = slideActualIdx;
+                    }
                 }
 
 
@@ -214,7 +240,7 @@ window.addEventListener("load", () => {
                 }, 100)
 
 
-                timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs2);
+                timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs);
                 intervalId = setInterval(intervalFn, intervalDurationMs);
 
             })
@@ -225,68 +251,70 @@ window.addEventListener("load", () => {
         let oldWalkingDistance = 0;
         // adding mousedown to each Slide
 
-        sliderBox.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement);
+        if (isDragable) {
+            sliderBox.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement);
 
-            // getting the initial position
-            initialPos = e.pageX - sliderBox.offsetLeft;
-            isMouseDown = true;
-        });
+                // getting the initial position
+                initialPos = e.pageX - sliderBox.offsetLeft;
+                isMouseDown = true;
+            });
 
-        sliderBox.addEventListener("touchstart", (e) => {
+            sliderBox.addEventListener("touchstart", (e) => {
 
-            [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement);
-            // getting the initial position
-            initialPos = e.touches[0].pageX - sliderBox.offsetLeft;
-            isMouseDown = true;
+                [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement);
+                // getting the initial position
+                initialPos = e.touches[0].pageX - sliderBox.offsetLeft;
+                isMouseDown = true;
 
-        });
+            });
 
-        sliderBox.addEventListener("mouseup", (e) => {
-            e.preventDefault();
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
+            sliderBox.addEventListener("mouseup", (e) => {
+                e.preventDefault();
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
 
-        });
+            });
 
-        sliderBox.addEventListener("touchend", (e) => {
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
-        })
+            sliderBox.addEventListener("touchend", (e) => {
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
+            })
 
-        sliderBox.addEventListener("mousemove", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isMouseDown) {
-                let movement = e.pageX - sliderBox.offsetLeft;
-                const walk = (initialPos - movement);
-                const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
-                tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
-                oldWalkingDistance = walkInPercent;
-                slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
-            }
-        })
+            sliderBox.addEventListener("mousemove", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isMouseDown) {
+                    let movement = e.pageX - sliderBox.offsetLeft;
+                    const walk = (initialPos - movement);
+                    const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
+                    tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
+                    oldWalkingDistance = walkInPercent;
+                    slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
+                }
+            })
 
-        sliderBox.addEventListener('touchmove', (e) => {
-            if (isMouseDown) {
-                let movement = e.touches[0].pageX - sliderBox.offsetLeft;
-                const walk = (initialPos - movement);
-                const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
-                tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
-                oldWalkingDistance = walkInPercent;
-                slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
-            }
-        }, { passive: false });
+            sliderBox.addEventListener('touchmove', (e) => {
+                if (isMouseDown) {
+                    let movement = e.touches[0].pageX - sliderBox.offsetLeft;
+                    const walk = (initialPos - movement);
+                    const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
+                    tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
+                    oldWalkingDistance = walkInPercent;
+                    slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
+                }
+            }, { passive: false });
 
-        sliderBox.addEventListener("mouseout", (e) => {
-            e.preventDefault();
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
-        })
+            sliderBox.addEventListener("mouseout", (e) => {
+                e.preventDefault();
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
+            })
+        }
 
     }
 
@@ -298,7 +326,7 @@ window.addEventListener("load", () => {
     }
 
 
-    function afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement) {
+    function afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement) {
         e.stopPropagation();
 
         // clearing all the interval and timeouts
@@ -362,7 +390,7 @@ window.addEventListener("load", () => {
     }
 
 
-    function afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e) {
+    function afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement) {
         e.stopPropagation();
 
         let displaceAmount = 0, currentZero = -1, prevZero = -1;
@@ -387,7 +415,7 @@ window.addEventListener("load", () => {
         dots[prevZero].classList.remove("dot-active");
         dots[currentZero].classList.add("dot-active");
 
-        const timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs2);
+        const timeoutId = setTimeout(removeExtraSlide, timeoutDurationMs);
         // const timeoutId = 0;
         const intervalId = setInterval(intervalFn, intervalDurationMs);
         // const intervalId = 0;
