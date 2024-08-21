@@ -34,12 +34,6 @@ window.addEventListener("load", () => {
     // initial position of the mouse
     let initialPos = 0;
 
-    // amount of displacement each time
-    let displacement = 110;
-
-    // initial displacement of the first slide
-    let initialDisplacement = 75;
-
     // different timings for different timing functions
     const timeoutDurationMs = 500, intervalDurationMs = 5000, durationOfTimeoutAfterInterval = 10;
     // const timeoutDurationMs = 10000, intervalDurationMs = 15000, durationOfTimeoutAfterInterval = 2000;
@@ -51,6 +45,14 @@ window.addEventListener("load", () => {
 
         // each slide
         let slides = document.querySelectorAll(`.slider-${i} .slide`);
+
+        // amount of displacement each time
+        const displacement = +sliderBox.dataset.displacement;
+
+        // initial displacement of the first slide
+        const initialDisplacement = +sliderBox.dataset.initialDisplacement;
+
+        const isDragable = sliderBox.dataset.dragable === "1";
 
         let slidesCount = slides.length;
         const initialSlideCount = slides.length;
@@ -247,68 +249,70 @@ window.addEventListener("load", () => {
         let oldWalkingDistance = 0;
         // adding mousedown to each Slide
 
-        sliderBox.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement);
+        if (isDragable) {
+            sliderBox.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement);
 
-            // getting the initial position
-            initialPos = e.pageX - sliderBox.offsetLeft;
-            isMouseDown = true;
-        });
+                // getting the initial position
+                initialPos = e.pageX - sliderBox.offsetLeft;
+                isMouseDown = true;
+            });
 
-        sliderBox.addEventListener("touchstart", (e) => {
+            sliderBox.addEventListener("touchstart", (e) => {
 
-            [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement);
-            // getting the initial position
-            initialPos = e.touches[0].pageX - sliderBox.offsetLeft;
-            isMouseDown = true;
+                [lastZerothIdx, tempTranslationArr, slides, slidesCount] = afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement);
+                // getting the initial position
+                initialPos = e.touches[0].pageX - sliderBox.offsetLeft;
+                isMouseDown = true;
 
-        });
+            });
 
-        sliderBox.addEventListener("mouseup", (e) => {
-            e.preventDefault();
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
+            sliderBox.addEventListener("mouseup", (e) => {
+                e.preventDefault();
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
 
-        });
+            });
 
-        sliderBox.addEventListener("touchend", (e) => {
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
-        })
+            sliderBox.addEventListener("touchend", (e) => {
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
+            })
 
-        sliderBox.addEventListener("mousemove", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isMouseDown) {
-                let movement = e.pageX - sliderBox.offsetLeft;
-                const walk = (initialPos - movement);
-                const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
-                tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
-                oldWalkingDistance = walkInPercent;
-                slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
-            }
-        })
+            sliderBox.addEventListener("mousemove", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isMouseDown) {
+                    let movement = e.pageX - sliderBox.offsetLeft;
+                    const walk = (initialPos - movement);
+                    const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
+                    tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
+                    oldWalkingDistance = walkInPercent;
+                    slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
+                }
+            })
 
-        sliderBox.addEventListener('touchmove', (e) => {
-            if (isMouseDown) {
-                let movement = e.touches[0].pageX - sliderBox.offsetLeft;
-                const walk = (initialPos - movement);
-                const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
-                tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
-                oldWalkingDistance = walkInPercent;
-                slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
-            }
-        }, { passive: false });
+            sliderBox.addEventListener('touchmove', (e) => {
+                if (isMouseDown) {
+                    let movement = e.touches[0].pageX - sliderBox.offsetLeft;
+                    const walk = (initialPos - movement);
+                    const walkInPercent = parseInt(walk / parseInt(window.getComputedStyle(sliderBox).width) * 100);
+                    tempTranslationArr = tempTranslationArr.map(val => val - walkInPercent + oldWalkingDistance);
+                    oldWalkingDistance = walkInPercent;
+                    slides.forEach((val, i) => val.style.transform = `translate(${tempTranslationArr[i]}%, 0)`);
+                }
+            }, { passive: false });
 
-        sliderBox.addEventListener("mouseout", (e) => {
-            e.preventDefault();
-            if (isMouseDown) {
-                [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e);
-            }
-        })
+            sliderBox.addEventListener("mouseout", (e) => {
+                e.preventDefault();
+                if (isMouseDown) {
+                    [isMouseDown, timeoutId, intervalId, oldWalkingDistance, slidesCount, slides] = afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement);
+                }
+            })
+        }
 
     }
 
@@ -320,7 +324,7 @@ window.addEventListener("load", () => {
     }
 
 
-    function afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement) {
+    function afterMouseMovesDown(slides, e, timeoutId, intervalId, translateArrs, i, slidesCount, initialSlideCount, maxDisplacement, minDisplacement, displacement, initialDisplacement) {
         e.stopPropagation();
 
         // clearing all the interval and timeouts
@@ -384,7 +388,7 @@ window.addEventListener("load", () => {
     }
 
 
-    function afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e) {
+    function afterMouseMovesUp(slides, slidesCount, translateArrs, i, oldWalkingDistance, dots, removeExtraSlide, intervalFn, e, displacement, initialDisplacement) {
         e.stopPropagation();
 
         let displaceAmount = 0, currentZero = -1, prevZero = -1;
