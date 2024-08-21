@@ -60,6 +60,8 @@ window.addEventListener("load", () => {
                 cloneAddTranslate(el, minDisplacement)
                 translateArrs[i - 1].push(minDisplacement);
             }
+
+            // el.className = `slide-${idx} ` + el.className;
         });
 
         slides = document.querySelectorAll(`.slider-${i} .slide`);
